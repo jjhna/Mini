@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class ParentScripo : MonoBehaviour {
 
-    public int fitness;
     private GameObject Boto;
-    public int[] parentarray = new int[500];
+    public int fitness;
+    public int[] parentarray = new int[300];
 
     // Use this for initialization
     void Start ()
@@ -14,7 +14,7 @@ public class ParentScripo : MonoBehaviour {
         BotConstructor();
     }
 
-    public void BotConstructor()
+    void BotConstructor()
     {
         Boto = GameObject.Find("ParentBot(Clone)");
         Boto.name = "ParentBot";

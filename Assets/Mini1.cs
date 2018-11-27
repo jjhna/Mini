@@ -11,28 +11,31 @@ public class Mini1 : MonoBehaviour
     public int botnum = 0;
     public int parentnum = 0;
     public int offspringnum = 0;
-    public int foodnum = 0;
 
-    public int ansnum = 500;
+    public int ansnum = 0;
 
-    public GameObject Bot, Off, Parent, Food;
+    public GameObject Bot, Off, Parent;
     public GameObject[] BotArray;
     public GameObject[] ParentArray;
     public GameObject[] OffArray;
-    public GameObject[] FoodArray;
 
     AImovment1[] AImove;
     ParentScripo[] parents;
     OffspringScript[] offspring;
-    FoodScript[] foods;
 
-    public bool allDead = false;
+    public bool doney, allDead = false;
     [SerializeField]
     private int[] FitArray;
     [SerializeField]
     private int[] OffFitArray;
     [SerializeField]
     private int[] ParentFitArray;
+    [SerializeField]
+    private int[] RandHitArray;
+    [SerializeField]
+    private int[] ParentHitArray;
+    [SerializeField]
+    private int[] OffHitArray;
     private bool[] endArray;
 
     void Start()
@@ -40,14 +43,14 @@ public class Mini1 : MonoBehaviour
         Setup();
         Spawn();
         SpawnCopy();
-        SpawnFood();
         FillArray();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Exitcheck() == true)
+        //If all AI's are dead or generation hits 1000 then program ends
+        if (Exitcheck() == true || generation == 1000)
         {
             Debug.Log("Exit finished");
         }
@@ -97,12 +100,18 @@ public class Mini1 : MonoBehaviour
             if (AImove[holder1].fitness < AImove[holder2].fitness)
             {
                 AImove[holder2].randarray.CopyTo(parents[a].parentarray, 0);
-                ParentFitArray[a] = AImove[holder2].fitness;
+                ParentFitArray[a] = FitArray[holder2];
+                ParentHitArray[a] = RandHitArray[holder2];
+                //ParentFitArray[a] = AImove[holder2].fitness;
+                //ParentHitArray[a] = AImove[holder2].randhit;
             }
             else
             {
                 AImove[holder1].randarray.CopyTo(parents[a].parentarray, 0);
-                ParentFitArray[a] = AImove[holder1].fitness;
+                ParentFitArray[a] = FitArray[holder1];
+                ParentHitArray[a] = RandHitArray[holder1];
+                //ParentFitArray[a] = AImove[holder1].fitness;
+                //ParentHitArray[a] = AImove[holder1].randhit;
             }
         }
 
@@ -112,6 +121,7 @@ public class Mini1 : MonoBehaviour
         {
             parents[k].parentarray.CopyTo(offspring[k].offspringarray, 0);
             OffFitArray[k] = ParentFitArray[k];
+            OffHitArray[k] = ParentHitArray[k];
         }
     }
 
@@ -124,11 +134,10 @@ public class Mini1 : MonoBehaviour
 
         while (j != offspringnum)
         {
-            int[] temparray = new int[ansnum];
             int ran1 = RandomInt(0, ansnum);
-            offspring[j].offspringarray.CopyTo(temparray, 0);
+            offspring[j].offspringarray.CopyTo(offspring[j].offspringtemp, 0);
             System.Array.Copy(offspring[k].offspringarray, ran1, offspring[j].offspringarray, ran1, (ansnum - ran1));
-            System.Array.Copy(temparray, ran1, offspring[k].offspringarray, ran1, (ansnum - ran1));
+            System.Array.Copy(offspring[j].offspringtemp, ran1, offspring[k].offspringarray, ran1, (ansnum - ran1));
             k++;
             j++;
         }
@@ -137,43 +146,69 @@ public class Mini1 : MonoBehaviour
     //Randomly changes the value in prefilled path of the array after the fitness gets off track
     void Mutation()
     {
+        double ran2 = RandomDoublet(0.0, 1.0);
+        //100% chance for offspring to mutate
+        //Use the scramble mutation
+        //for (int i = 0; i < offspringnum; i++)
+        //{
+        //    int j = 0;
+        //    int d = 0;
+        //    int ran4 = RandomInt(0, (ansnum - 10));
+        //    int ran5 = RandomInt(2, 10);
+        //    int[] temp = new int[ran5];
+        //    //Get all 5-10 elements and store in a temp array
+        //    for (int b = ran4; b < (ran4 + ran5); b++)
+        //    {
+        //        temp[j] = offspring[i].offspringarray[b];
+        //        j++;
+        //    }
+        //    //Use fisher-yates shuffle, shuffles the sequence
+        //    int k = temp.Length;
+        //    while (k > 1)
+        //    {
+        //        k--;
+        //        int f = rand.Next(k + 1);
+        //        int temptemp = temp[f];
+        //        temp[f] = temp[k];
+        //        temp[k] = temptemp;
+        //    }
+        //    //Now put back that shit into the array
+        //    for (int b = ran4; b < (ran4 + ran5); b++)
+        //    {
+        //        offspring[i].offspringarray[b] = temp[d];
+        //        d++;
+        //    }
+        //}
+
         //100% chance for offspring to mutate
         for (int i = 0; i < offspringnum; i++)
         {
-            int a = OffFitArray[i] + 1;
-            int ran1 = RandomInt(1, 5);
-            for (; a < ansnum; a++)
+            int ran8 = RandomInt(1, 20);
+            int a = OffHitArray[i];
+            if (a > 20)
             {
-                offspring[i].offspringarray[a] = ran1;
+                a = a - ran8;
+            }
+            int h = 0;
+            while (h != 1)
+            {
+                int ran1 = RandomInt(1, 5);
+                if (ran1 != OffHitArray[i])
+                {
+                    for (; a < ansnum; a++)
+                    {
+                        offspring[i].offspringarray[a] = ran1;
+                    }
+                    h++;
+                }
             }
         }
 
         //80% chance for parents to mutate, using flip bit
-        double ran2 = RandomDoublet(0.0, 1.0);
+        //double ran2 = RandomDoublet(0.0, 1.0);
         if (ran2 < 0.8)
         {
-            for (int i = 0; i < parentnum; i++)
-            {
-                int b = OffFitArray[i] + 1;
-                int ran3 = 0;
-                int j = 0;
-                while (j != 1)
-                {
-                    ran3 = RandomInt(1, 5);
-                    if (b != ran3)
-                    {
-                        j++;
-                    }
-                }
-                for (; b < ansnum; b++)
-                {
-                    parents[i].parentarray[b] = ran3;
-                }
-            }
-        }
-        else
-        {
-            //Use the swap mutation
+            //Use the scramble mutation
             for (int i = 0; i < parentnum; i++)
             {
                 int j = 0;
@@ -187,7 +222,7 @@ public class Mini1 : MonoBehaviour
                     temp[j] = parents[i].parentarray[b];
                     j++;
                 }
-                //Use fisher-yates shuffle
+                //Use fisher-yates shuffle, shuffles the sequence
                 int k = temp.Length;
                 while (k > 1)
                 {
@@ -202,6 +237,31 @@ public class Mini1 : MonoBehaviour
                 {
                     parents[i].parentarray[b] = temp[d];
                     d++;
+                }
+            }
+        }
+        else
+        {
+            //Use flip bit mutation
+            for (int i = 0; i < parentnum; i++)
+            {
+                int ran1 = RandomInt(1, (ansnum / 4));
+                int a = 0;
+                while (a != ran1)
+                {
+                    int ran4 = RandomInt(0, ansnum);
+                    int e = 0;
+                    while (e != 1)
+                    {
+                        int ran5 = RandomInt(1, 5);
+                        int tempy = parents[i].parentarray[ran4];
+                        if (ran5 != tempy)
+                        {
+                            parents[i].parentarray[ran4] = ran5;
+                            e++;
+                        }
+                    }
+                    a++;
                 }
             }
         }
@@ -220,6 +280,7 @@ public class Mini1 : MonoBehaviour
             i++;
             j++;
         }
+        doney = true;
     }
 
     //Instantiates or creates new AI gameobjects
@@ -231,15 +292,6 @@ public class Mini1 : MonoBehaviour
             BotArray[i] = Instantiate(Bot, new Vector2(-6 + (i * 0.001f), 4.3f), transform.rotation);
             AImove[i] = BotArray[i].GetComponent<AImovment1>();
             allDead = false;
-        }
-    }
-
-    void SpawnFood()
-    {
-        for (int i = 0; i < foodnum; i++)
-        {
-            FoodArray[i] = Instantiate(Food, new Vector2(-6 + i, 4.3f), transform.rotation);
-            foods[i] = FoodArray[i].GetComponent<FoodScript>();
         }
     }
 
@@ -269,6 +321,27 @@ public class Mini1 : MonoBehaviour
                 AImove[i].randarray[a] = ran1;
             }
         }
+    }
+
+    //Instantiates how many AI's, Parents and Offsprings there are
+    void Setup()
+    {
+        BotArray = new GameObject[botnum];
+        ParentArray = new GameObject[parentnum];
+        OffArray = new GameObject[offspringnum];
+
+        AImove = new AImovment1[botnum];
+        parents = new ParentScripo[parentnum];
+        offspring = new OffspringScript[offspringnum];
+
+        FitArray = new int[botnum];
+        RandHitArray = new int[botnum];
+        ParentFitArray = new int[parentnum];
+        ParentHitArray = new int[parentnum];
+        OffFitArray = new int[offspringnum];
+        OffHitArray = new int[offspringnum];
+
+        endArray = new bool[botnum];
     }
 
     //Function to randomly choose between min and max, return int+
@@ -321,10 +394,12 @@ public class Mini1 : MonoBehaviour
     //Fills in all the fitness and dead AI to checklist
     void FitnessFill()
     {
+        doney = false;
         for (int i = 0; i < botnum; i++)
         {
             FitArray[i] = AImove[i].fitness;
             endArray[i] = AImove[i].collided;
+            RandHitArray[i] = AImove[i].randhit;
         }
     }
 
@@ -343,26 +418,6 @@ public class Mini1 : MonoBehaviour
                 break;
             }
         }
-    }
-
-    //Instantiates how many AI's, Parents and Offsprings there are
-    void Setup()
-    {
-        BotArray = new GameObject[botnum];
-        ParentArray = new GameObject[parentnum];
-        OffArray = new GameObject[offspringnum];
-        FoodArray = new GameObject[foodnum];
-
-        AImove = new AImovment1[botnum];
-        parents = new ParentScripo[parentnum];
-        offspring = new OffspringScript[offspringnum];
-        foods = new FoodScript[foodnum];
-
-        FitArray = new int[botnum];
-        ParentFitArray = new int[parentnum];
-        OffFitArray = new int[offspringnum];
-
-        endArray = new bool[botnum];
     }
 
 }

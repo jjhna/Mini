@@ -4,9 +4,10 @@ using UnityEngine;
 
 public class OffspringScript : MonoBehaviour {
 
-    public int fitness;
     private GameObject Boto;
-    public int[] offspringarray = new int[500];
+    public int fitness;
+    public int[] offspringarray = new int[300];
+    public int[] offspringtemp = new int[300];
 
     // Use this for initialization
     void Start ()
@@ -14,7 +15,7 @@ public class OffspringScript : MonoBehaviour {
         BotConstructor();
     }
 
-    public void BotConstructor()
+    void BotConstructor()
     {
         Boto = GameObject.Find("OffspringAI(Clone)");
         Boto.name = "OffspringAI";
