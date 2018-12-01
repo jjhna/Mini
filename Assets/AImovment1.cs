@@ -10,33 +10,31 @@ public class AImovment1 : MonoBehaviour
     public float movespeed = 0.0f;
     public bool exit, collided = false;
     public int fitness;
+    [SerializeField]
     private int whatnumami = 0;
-    [SerializeField]
     private int randint;
-    BoxCollider2D boxcol;
     public int randhit;
-    public int[] randarray = new int[300];
-    [SerializeField]
-    GameObject[] FoodItems = new GameObject[100];
-    [SerializeField]
-    FoodScript[] foodies = new FoodScript[100];
+    public int[] randarray = new int[400];
+    GameObject[] FoodItems = new GameObject[968];
+    FoodScript[] foodies = new FoodScript[968];
     Mini1 min1;
 
     //A constructor to intialize and get components from the clone AI's
     void BotConstructor()
     {
+        //Finds the Spawn gameobject
         Spawno = GameObject.Find("Spawn");
         min1 = Spawno.GetComponent<Mini1>();
         
+        //Find the current AI gameobject
         Boto = GameObject.Find("AI1(Clone)");
         Boto.name = "AI";
 
+        //Finds what index this AI is
         whatnumami = System.Array.IndexOf(min1.BotArray, Boto);
 
         fitness = 0;
         randint = 0;
-        boxcol = Boto.AddComponent<BoxCollider2D>();
-        boxcol.isTrigger = true;
     }
 
     // Use this for initialization
@@ -52,19 +50,9 @@ public class AImovment1 : MonoBehaviour
         MoveArray();
     }
 
-    //void OnCollisionEnter2D(Collision2D col)
-    //{
-    //    if (col.gameObject.tag == "Wall")
-    //    {
-    //        Boto.SetActive(false);
-    //        collided = true;
-    //    }
-    //    else if (col.gameObject.tag == "Final")
-    //    {
-    //        exit = true;
-    //    }
-    //}
-
+    //If AI hits a wall it dies, the exit programs end, a food then it checks if it hasn't be triggered before
+    //If the food hasn't been triggered by that particular AI then the fitness rating goes up and that food becomes disabled
+    //To the AI that has triggered it
     void OnTriggerEnter2D(Collider2D col)
     {
         if (col.gameObject.tag == "Wall")
@@ -92,23 +80,7 @@ public class AImovment1 : MonoBehaviour
         }
     }
 
-    //void OnTriggerExit2D(Collider2D col)
-    //{
-    //    if (col.gameObject.tag == "FoodTag")
-    //    {
-    //        GameObject miep = col.gameObject;
-    //        int idam = System.Array.IndexOf(FoodItems, miep);
-    //        if (col.gameObject == FoodItems[idam])
-    //        {
-    //            if (foodies[idam].foodcheckarray[whatnumami] == false)
-    //            {
-    //                foodies[idam].foodcheckarray[whatnumami] = true;
-    //                fitness++;
-    //            }
-    //        }
-    //    }
-    //}
-
+    //Finds all the food gameobjects and put into an array and its foodscript
     void TrackFood()
     {
         FoodItems = GameObject.FindGameObjectsWithTag("FoodTag");
@@ -118,7 +90,7 @@ public class AImovment1 : MonoBehaviour
         }
     }
 
-    //Have to make AI die if over than 235
+    //Moves the array and keeps track of what iteration in the arrya and kills the AI if it goes past the array length
     void MoveArray()
     {
         if (randint == randarray.Length)
@@ -135,6 +107,7 @@ public class AImovment1 : MonoBehaviour
         }
     }
 
+    //Movement AI 1 - down, 2 - up, 3 - left, 4 - right
     void Movement(int ran1)
     {
         switch (ran1)

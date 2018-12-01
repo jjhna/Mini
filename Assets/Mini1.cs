@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using System.Linq;
 
 //Uses the car movement, rotation + front raycast
 public class Mini1 : MonoBehaviour
@@ -26,15 +27,10 @@ public class Mini1 : MonoBehaviour
     public bool doney, allDead = false;
     [SerializeField]
     private int[] FitArray;
-    [SerializeField]
     private int[] OffFitArray;
-    [SerializeField]
     private int[] ParentFitArray;
-    [SerializeField]
     private int[] RandHitArray;
-    [SerializeField]
     private int[] ParentHitArray;
-    [SerializeField]
     private int[] OffHitArray;
     private bool[] endArray;
 
@@ -49,10 +45,10 @@ public class Mini1 : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //If all AI's are dead or generation hits 1000 then program ends
+        //If all AI's are dead or generation hits x amount then program ends
         if (Exitcheck() == true || generation == 1000)
         {
-            Debug.Log("Exit finished");
+            PressPause();
         }
         //if all AI's are dead then new generation
         else if (allDead == true)
@@ -75,22 +71,26 @@ public class Mini1 : MonoBehaviour
         }
     }
 
-    //Tournament Selection, due to negative fitness numbers, send to parents, parents clone to offsprings
+    //Tournament Selection, pits 1 vs 1 random selected parents, send to parents, parents clone to offsprings
     void Selection()
     {
-
+        //tempselect holds the winners to give the poor fuckers a chance
+        int[] tempselect = new int[50];
         for (int a = 0; a < parentnum; a++)
         {
             int holder1 = 0;
             int holder2 = 0;
             int i = 0;
-
-            //Select 2 random AI's from the list
+            //Select 2 random AI's from the list, while they are not the same or used previously
             while (i != 1)
             {
                 holder1 = RandomInt(0, botnum);
                 holder2 = RandomInt(0, botnum);
-                if (holder1 != holder2)
+                //Note Array.IndexOf returns -1 if element can't be found in the array
+                int nam1 = System.Array.IndexOf(tempselect, holder1);
+                int nam2 = System.Array.IndexOf(tempselect, holder2);
+                //If the AI is not the same and not been used then the two random AI's proceed
+                if (holder1 != holder2 && nam1 == -1 && nam2 == -1)
                 {
                     i++;
                 }
@@ -102,16 +102,14 @@ public class Mini1 : MonoBehaviour
                 AImove[holder2].randarray.CopyTo(parents[a].parentarray, 0);
                 ParentFitArray[a] = FitArray[holder2];
                 ParentHitArray[a] = RandHitArray[holder2];
-                //ParentFitArray[a] = AImove[holder2].fitness;
-                //ParentHitArray[a] = AImove[holder2].randhit;
+                tempselect[a] = holder2;
             }
             else
             {
                 AImove[holder1].randarray.CopyTo(parents[a].parentarray, 0);
                 ParentFitArray[a] = FitArray[holder1];
                 ParentHitArray[a] = RandHitArray[holder1];
-                //ParentFitArray[a] = AImove[holder1].fitness;
-                //ParentHitArray[a] = AImove[holder1].randhit;
+                tempselect[a] = holder1;
             }
         }
 
@@ -146,69 +144,79 @@ public class Mini1 : MonoBehaviour
     //Randomly changes the value in prefilled path of the array after the fitness gets off track
     void Mutation()
     {
+        double ran6 = RandomDoublet(0.0, 1.0);
         double ran2 = RandomDoublet(0.0, 1.0);
-        //100% chance for offspring to mutate
-        //Use the scramble mutation
-        //for (int i = 0; i < offspringnum; i++)
-        //{
-        //    int j = 0;
-        //    int d = 0;
-        //    int ran4 = RandomInt(0, (ansnum - 10));
-        //    int ran5 = RandomInt(2, 10);
-        //    int[] temp = new int[ran5];
-        //    //Get all 5-10 elements and store in a temp array
-        //    for (int b = ran4; b < (ran4 + ran5); b++)
-        //    {
-        //        temp[j] = offspring[i].offspringarray[b];
-        //        j++;
-        //    }
-        //    //Use fisher-yates shuffle, shuffles the sequence
-        //    int k = temp.Length;
-        //    while (k > 1)
-        //    {
-        //        k--;
-        //        int f = rand.Next(k + 1);
-        //        int temptemp = temp[f];
-        //        temp[f] = temp[k];
-        //        temp[k] = temptemp;
-        //    }
-        //    //Now put back that shit into the array
-        //    for (int b = ran4; b < (ran4 + ran5); b++)
-        //    {
-        //        offspring[i].offspringarray[b] = temp[d];
-        //        d++;
-        //    }
-        //}
-
-        //100% chance for offspring to mutate
-        for (int i = 0; i < offspringnum; i++)
+        if (ran6 < 0.8)
         {
-            int ran8 = RandomInt(1, 20);
-            int a = OffHitArray[i];
-            if (a > 20)
+            //100% chance for offspring to mutate, Use the scramble mutation
+            for (int i = 0; i < offspringnum; i++)
             {
-                a = a - ran8;
-            }
-            int h = 0;
-            while (h != 1)
-            {
-                int ran1 = RandomInt(1, 5);
-                if (ran1 != OffHitArray[i])
+                int j = 0;
+                int d = 0;
+                int ran4 = RandomInt(0, (ansnum - 10));
+                int ran5 = RandomInt(2, 10);
+                int[] temp = new int[ran5];
+                //Get all 5-10 elements and store in a temp array
+                for (int b = ran4; b < (ran4 + ran5); b++)
                 {
-                    for (; a < ansnum; a++)
+                    temp[j] = offspring[i].offspringarray[b];
+                    j++;
+                }
+                //Use fisher-yates shuffle, shuffles the sequence
+                int k = temp.Length;
+                while (k > 1)
+                {
+                    k--;
+                    int f = rand.Next(k + 1);
+                    int temptemp = temp[f];
+                    temp[f] = temp[k];
+                    temp[k] = temptemp;
+                }
+                //Now put back that shit into the array
+                for (int b = ran4; b < (ran4 + ran5); b++)
+                {
+                    offspring[i].offspringarray[b] = temp[d];
+                    d++;
+                }
+            }
+        }
+        else
+        {
+            //100% chance for offspring to mutate
+            //Mutation using bit flip whole mutation of array from last death location
+            //Changes rest of the array from before it hits a wall
+            for (int i = 0; i < offspringnum; i++)
+            {
+                int ran8 = RandomInt(1, 50);
+                int a = OffHitArray[i];
+                if (a > 50)
+                {
+                    a = a - ran8;
+                }
+                int h = 0;
+                while (h != 1)
+                {
+                    int ran1 = RandomInt(1, 5);
+                    int offtest = offspring[i].offspringarray[a];
+                    int checker = MoveCheck(offtest);
+                    if (ran1 != offtest && ran1 != checker)
                     {
-                        offspring[i].offspringarray[a] = ran1;
+                        for (; a < ansnum; a++)
+                        {
+                            offspring[i].offspringarray[a] = ran1;
+                        }
+                        h++;
                     }
-                    h++;
                 }
             }
         }
 
         //80% chance for parents to mutate, using flip bit
+        //Mutation using scramble mutation
         //double ran2 = RandomDoublet(0.0, 1.0);
         if (ran2 < 0.8)
         {
-            //Use the scramble mutation
+            //Use the Scramble mutation
             for (int i = 0; i < parentnum; i++)
             {
                 int j = 0;
@@ -242,7 +250,7 @@ public class Mini1 : MonoBehaviour
         }
         else
         {
-            //Use flip bit mutation
+            //Use flip bit actual mutation, one bit flip so many times
             for (int i = 0; i < parentnum; i++)
             {
                 int ran1 = RandomInt(1, (ansnum / 4));
@@ -267,7 +275,7 @@ public class Mini1 : MonoBehaviour
         }
     }
 
-    //Adds the new offsprings to the AI group
+    //Adds the new offsprings and alpha parents to the AI group, Also tells the Food gameobjects that the AI's have been reset
     void AddOffspring()
     {
         int j = 0;
@@ -280,7 +288,8 @@ public class Mini1 : MonoBehaviour
             i++;
             j++;
         }
-        doney = true;
+
+        doney = true; //Tells the Food gameobjects that the AI's has been reset
     }
 
     //Instantiates or creates new AI gameobjects
@@ -323,7 +332,7 @@ public class Mini1 : MonoBehaviour
         }
     }
 
-    //Instantiates how many AI's, Parents and Offsprings there are
+    //Instantiates how many AI's, Parents and Offsprings there are from the user input
     void Setup()
     {
         BotArray = new GameObject[botnum];
@@ -378,7 +387,7 @@ public class Mini1 : MonoBehaviour
         }
     }
 
-    //Checks if the AI touches the exit area, returns t or f
+    //Checks if the AI touches the exit area, returns t or f, if true then the whole program ends
     bool Exitcheck()
     {
         for (int i = 0; i < botnum; i++)
@@ -391,10 +400,10 @@ public class Mini1 : MonoBehaviour
         return false;
     }
 
-    //Fills in all the fitness and dead AI to checklist
+    //Fills in all the fitness, last known array movement and dead AI to checklist
     void FitnessFill()
     {
-        doney = false;
+        doney = false; //Lets the Food know that the AI is still alive
         for (int i = 0; i < botnum; i++)
         {
             FitArray[i] = AImove[i].fitness;
@@ -417,6 +426,36 @@ public class Mini1 : MonoBehaviour
                 allDead = false;
                 break;
             }
+        }
+    }
+
+    //Prevents the array from moving in the opposite direciton
+    int MoveCheck(int checky)
+    {
+        if (checky == 1)
+        {
+            return 2;
+        }
+        else if (checky == 2)
+        {
+            return 1;
+        }
+        else if (checky == 3)
+        {
+            return 4;
+        }
+        else //(checky == 4)
+        {
+            return 3;
+        }
+    }
+
+    //Temporary pauses unity to collect data, freezes the AI's
+    void PressPause()
+    {
+        for (int i = 0; i < botnum; i++)
+        {
+            BotArray[i].SetActive(false);
         }
     }
 

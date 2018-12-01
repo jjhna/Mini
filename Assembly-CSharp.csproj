@@ -55,13 +55,16 @@
      <Compile Include="Assets\AImovment1.cs" />
      <Compile Include="Assets\AImovment2.cs" />
      <Compile Include="Assets\AImovment3.cs" />
+     <Compile Include="Assets\AImovment4.cs" />
      <Compile Include="Assets\CheckScript.cs" />
      <Compile Include="Assets\CopycatScript.cs" />
      <Compile Include="Assets\FoodScript.cs" />
+     <Compile Include="Assets\FoodScript2.cs" />
      <Compile Include="Assets\Mini.cs" />
      <Compile Include="Assets\Mini1.cs" />
      <Compile Include="Assets\Mini2.cs" />
      <Compile Include="Assets\Mini3.cs" />
+     <Compile Include="Assets\Mini4.cs" />
      <Compile Include="Assets\OffspringScript.cs" />
      <Compile Include="Assets\OffspringScript2.cs" />
      <Compile Include="Assets\ParentScripo.cs" />

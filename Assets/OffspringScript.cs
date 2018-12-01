@@ -6,8 +6,8 @@ public class OffspringScript : MonoBehaviour {
 
     private GameObject Boto;
     public int fitness;
-    public int[] offspringarray = new int[300];
-    public int[] offspringtemp = new int[300];
+    public int[] offspringarray = new int[400];
+    public int[] offspringtemp = new int[400];
 
     // Use this for initialization
     void Start ()
@@ -19,7 +19,7 @@ public class OffspringScript : MonoBehaviour {
     {
         Boto = GameObject.Find("OffspringAI(Clone)");
         Boto.name = "OffspringAI";
-        fitness = -1;
+        fitness = 0;
     }
 
     // Update is called once per frame

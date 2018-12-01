@@ -348,4 +348,51 @@ public class Mini3 : MonoBehaviour
         endArray = new bool[botnum];
     }
 
+    ////Stochastic universal sampling, wheel selection with 2 fixed points
+    //int SelectionWheel()
+    //{
+    //    int sum = FitArray.Sum();
+    //    int n = offspring.Length;
+    //    int p = (sum / n);
+    //    int start = RandomInt(0, p);
+    //    int point = 0;
+    //    for (int i = 0; i < n; i++)
+    //    {
+    //        point = (start + (i * p));
+    //    }
+    //    return point;
+    //}
+
+    //int[] ReturnSelectionWheel(int point)
+    //{
+    //    int[] keep = new int[50];
+    //    for (int p = 0; p < point; p++)
+    //    {
+    //        int i = 0;
+    //        //int sumy = FitArray.Skip(i).Sum();
+    //        int sumy = 0;
+    //        for (int d = 0; d < i; d++)
+    //        {
+    //            sumy += FitArray[d];
+    //        }
+    //        while (sumy < p)
+    //        {
+    //            i++;
+    //        }
+    //        keep[p] = FitArray[i];
+    //    }
+    //    return keep;
+    //}
+
+    //void FinalSelection()
+    //{
+    //    int final = SelectionWheel();
+    //    int[] smat = ReturnSelectionWheel(final);
+    //    for (int i = 0; i < smat.Length; i++)
+    //    {
+
+    //    }
+    //}
+
+
 }

@@ -6,7 +6,7 @@ public class ParentScripo : MonoBehaviour {
 
     private GameObject Boto;
     public int fitness;
-    public int[] parentarray = new int[300];
+    public int[] parentarray = new int[400];
 
     // Use this for initialization
     void Start ()
@@ -18,7 +18,7 @@ public class ParentScripo : MonoBehaviour {
     {
         Boto = GameObject.Find("ParentBot(Clone)");
         Boto.name = "ParentBot";
-        fitness = -1;
+        fitness = 0;
     }
 
     // Update is called once per frame
