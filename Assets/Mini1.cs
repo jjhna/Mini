@@ -34,6 +34,11 @@ public class Mini1 : MonoBehaviour
     private int[] OffHitArray;
     private bool[] endArray;
 
+    public int winner = 0;
+    public int winrandhit = 0;
+    [SerializeField]
+    GameObject Winnerdinner;
+
     void Start()
     {
         Setup();
@@ -48,6 +53,7 @@ public class Mini1 : MonoBehaviour
         //If all AI's are dead or generation hits x amount then program ends
         if (Exitcheck() == true || generation == 1000)
         {
+            Winnerdinner = BotArray[winner];
             PressPause();
         }
         //if all AI's are dead then new generation
@@ -141,20 +147,50 @@ public class Mini1 : MonoBehaviour
         }
     }
 
-    //Randomly changes the value in prefilled path of the array after the fitness gets off track
+    //Randomly changes the value in prefilled path of the array for each parent and offspring
     void Mutation()
     {
         double ran6 = RandomDoublet(0.0, 1.0);
         double ran2 = RandomDoublet(0.0, 1.0);
         if (ran6 < 0.8)
         {
-            //100% chance for offspring to mutate, Use the scramble mutation
+            //80% chance for offspring to mutate, using large flip bit mutation
+            //Mutation using bit flip whole mutation of array from last death location
+            //Changes rest of the array from before it hits a wall
+            for (int i = 0; i < offspringnum; i++)
+            {
+                int ran8 = RandomInt(1, 5);
+                int a = OffHitArray[i];
+                if (a > 5)
+                {
+                    a = a - ran8;
+                }
+                int h = 0;
+                while (h != 1)
+                {
+                    int ran1 = RandomInt(1, 5);
+                    int offtest = offspring[i].offspringarray[a];
+                    int checker = MoveCheck(offtest);
+                    if (ran1 != offtest && ran1 != checker)
+                    {
+                        for (; a < ansnum; a++)
+                        {
+                            offspring[i].offspringarray[a] = ran1;
+                        }
+                        h++;
+                    }
+                }
+            }
+        }
+        else
+        {
+            //20% chance for offspring to use swap mutation with 2-10 whole arrays from a random array location
             for (int i = 0; i < offspringnum; i++)
             {
                 int j = 0;
                 int d = 0;
-                int ran4 = RandomInt(0, (ansnum - 10));
-                int ran5 = RandomInt(2, 10);
+                int ran4 = RandomInt(0, (ansnum - 25));
+                int ran5 = RandomInt(5, 25);
                 int[] temp = new int[ran5];
                 //Get all 5-10 elements and store in a temp array
                 for (int b = ran4; b < (ran4 + ran5); b++)
@@ -180,16 +216,17 @@ public class Mini1 : MonoBehaviour
                 }
             }
         }
-        else
+
+        if (ran2 < 0.8)
         {
-            //100% chance for offspring to mutate
+            //80% chance for parent to mutate, using large flip bit mutation
             //Mutation using bit flip whole mutation of array from last death location
             //Changes rest of the array from before it hits a wall
-            for (int i = 0; i < offspringnum; i++)
+            for (int i = 0; i < parentnum; i++)
             {
-                int ran8 = RandomInt(1, 50);
-                int a = OffHitArray[i];
-                if (a > 50)
+                int ran8 = RandomInt(1, 25);
+                int a = ParentHitArray[i];
+                if (a > 25)
                 {
                     a = a - ran8;
                 }
@@ -197,32 +234,28 @@ public class Mini1 : MonoBehaviour
                 while (h != 1)
                 {
                     int ran1 = RandomInt(1, 5);
-                    int offtest = offspring[i].offspringarray[a];
+                    int offtest = parents[i].parentarray[a];
                     int checker = MoveCheck(offtest);
                     if (ran1 != offtest && ran1 != checker)
                     {
                         for (; a < ansnum; a++)
                         {
-                            offspring[i].offspringarray[a] = ran1;
+                            parents[i].parentarray[a] = ran1;
                         }
                         h++;
                     }
                 }
             }
         }
-
-        //80% chance for parents to mutate, using flip bit
-        //Mutation using scramble mutation
-        //double ran2 = RandomDoublet(0.0, 1.0);
-        if (ran2 < 0.8)
+        else
         {
-            //Use the Scramble mutation
+            //20% chance for parent to use swap mutation with 2-10 whole arrays from a random array location
             for (int i = 0; i < parentnum; i++)
             {
                 int j = 0;
                 int d = 0;
-                int ran4 = RandomInt(0, (ansnum - 10));
-                int ran5 = RandomInt(5, 10);
+                int ran4 = RandomInt(0, (ansnum - 25));
+                int ran5 = RandomInt(5, 25);
                 int[] temp = new int[ran5];
                 //Get all 5-10 elements and store in a temp array
                 for (int b = ran4; b < (ran4 + ran5); b++)
@@ -245,31 +278,6 @@ public class Mini1 : MonoBehaviour
                 {
                     parents[i].parentarray[b] = temp[d];
                     d++;
-                }
-            }
-        }
-        else
-        {
-            //Use flip bit actual mutation, one bit flip so many times
-            for (int i = 0; i < parentnum; i++)
-            {
-                int ran1 = RandomInt(1, (ansnum / 4));
-                int a = 0;
-                while (a != ran1)
-                {
-                    int ran4 = RandomInt(0, ansnum);
-                    int e = 0;
-                    while (e != 1)
-                    {
-                        int ran5 = RandomInt(1, 5);
-                        int tempy = parents[i].parentarray[ran4];
-                        if (ran5 != tempy)
-                        {
-                            parents[i].parentarray[ran4] = ran5;
-                            e++;
-                        }
-                    }
-                    a++;
                 }
             }
         }

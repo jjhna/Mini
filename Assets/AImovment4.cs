@@ -63,6 +63,8 @@ public class AImovment4 : MonoBehaviour
         }
         else if (col.gameObject.tag == "Final")
         {
+            min1.winner = whatnumami;
+            min1.winrandhit = randint;
             exit = true;
         }
         else if (col.gameObject.tag == "FoodTag")
@@ -75,6 +77,10 @@ public class AImovment4 : MonoBehaviour
                 {
                     foodies[idam].foodcheckarray[whatnumami] = true;
                     fitness++;
+                }
+                else
+                {
+                    fitness--;
                 }
             }
         }
