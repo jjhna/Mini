@@ -58,6 +58,7 @@
      <Compile Include="Assets\AImovment4.cs" />
      <Compile Include="Assets\CheckScript.cs" />
      <Compile Include="Assets\CopycatScript.cs" />
+     <Compile Include="Assets\DrawMaze.cs" />
      <Compile Include="Assets\FoodScript.cs" />
      <Compile Include="Assets\FoodScript2.cs" />
      <Compile Include="Assets\Mini.cs" />

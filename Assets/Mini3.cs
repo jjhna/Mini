@@ -394,5 +394,139 @@ public class Mini3 : MonoBehaviour
     //    }
     //}
 
+    ////Randomly changes the value in prefilled path of the array for each parent and offspring
+    //void Mutation()
+    //{
+    //    double ran6 = RandomDoublet(0.0, 1.0);
+    //    double ran2 = RandomDoublet(0.0, 1.0);
+    //    if (ran6 < 0.8)
+    //    {
+    //        //80% chance for offspring to mutate, using large flip bit mutation
+    //        //Mutation using bit flip whole mutation of array from last death location
+    //        //Changes rest of the array from before it hits a wall
+    //        for (int i = 0; i < offspringnum; i++)
+    //        {
+    //            int ran8 = RandomInt(1, 5);
+    //            int a = OffHitArray[i];
+    //            if (a > 5)
+    //            {
+    //                a = a - ran8;
+    //            }
+    //            int h = 0;
+    //            while (h != 1)
+    //            {
+    //                int ran1 = RandomInt(1, 5);
+    //                int offtest = offspring[i].offspringarray[a];
+    //                int checker = MoveCheck(offtest);
+    //                if (ran1 != offtest && ran1 != checker)
+    //                {
+    //                    for (; a < ansnum; a++)
+    //                    {
+    //                        offspring[i].offspringarray[a] = ran1;
+    //                    }
+    //                    h++;
+    //                }
+    //            }
+    //        }
+    //    }
+    //    else
+    //    {
+    //        //20% chance for offspring to use swap mutation with 2-10 whole arrays from a random array location
+    //        for (int i = 0; i < offspringnum; i++)
+    //        {
+    //            int j = 0;
+    //            int d = 0;
+    //            int ran4 = RandomInt(0, (ansnum - 25));
+    //            int ran5 = RandomInt(5, 25);
+    //            int[] temp = new int[ran5];
+    //            //Get all 5-10 elements and store in a temp array
+    //            for (int b = ran4; b < (ran4 + ran5); b++)
+    //            {
+    //                temp[j] = offspring[i].offspringarray[b];
+    //                j++;
+    //            }
+    //            //Use fisher-yates shuffle, shuffles the sequence
+    //            int k = temp.Length;
+    //            while (k > 1)
+    //            {
+    //                k--;
+    //                int f = rand.Next(k + 1);
+    //                int temptemp = temp[f];
+    //                temp[f] = temp[k];
+    //                temp[k] = temptemp;
+    //            }
+    //            //Now put back that shit into the array
+    //            for (int b = ran4; b < (ran4 + ran5); b++)
+    //            {
+    //                offspring[i].offspringarray[b] = temp[d];
+    //                d++;
+    //            }
+    //        }
+    //    }
 
+    //    if (ran2 < 0.8)
+    //    {
+    //        //80% chance for parent to mutate, using large flip bit mutation
+    //        //Mutation using bit flip whole mutation of array from last death location
+    //        //Changes rest of the array from before it hits a wall
+    //        for (int i = 0; i < parentnum; i++)
+    //        {
+    //            int ran8 = RandomInt(1, 25);
+    //            int a = ParentHitArray[i];
+    //            if (a > 25)
+    //            {
+    //                a = a - ran8;
+    //            }
+    //            int h = 0;
+    //            while (h != 1)
+    //            {
+    //                int ran1 = RandomInt(1, 5);
+    //                int offtest = parents[i].parentarray[a];
+    //                int checker = MoveCheck(offtest);
+    //                if (ran1 != offtest && ran1 != checker)
+    //                {
+    //                    for (; a < ansnum; a++)
+    //                    {
+    //                        parents[i].parentarray[a] = ran1;
+    //                    }
+    //                    h++;
+    //                }
+    //            }
+    //        }
+    //    }
+    //    else
+    //    {
+    //        //20% chance for parent to use swap mutation with 2-10 whole arrays from a random array location
+    //        for (int i = 0; i < parentnum; i++)
+    //        {
+    //            int j = 0;
+    //            int d = 0;
+    //            int ran4 = RandomInt(0, (ansnum - 25));
+    //            int ran5 = RandomInt(5, 25);
+    //            int[] temp = new int[ran5];
+    //            //Get all 5-10 elements and store in a temp array
+    //            for (int b = ran4; b < (ran4 + ran5); b++)
+    //            {
+    //                temp[j] = parents[i].parentarray[b];
+    //                j++;
+    //            }
+    //            //Use fisher-yates shuffle, shuffles the sequence
+    //            int k = temp.Length;
+    //            while (k > 1)
+    //            {
+    //                k--;
+    //                int f = rand.Next(k + 1);
+    //                int temptemp = temp[f];
+    //                temp[f] = temp[k];
+    //                temp[k] = temptemp;
+    //            }
+    //            //Now put back that shit into the array
+    //            for (int b = ran4; b < (ran4 + ran5); b++)
+    //            {
+    //                parents[i].parentarray[b] = temp[d];
+    //                d++;
+    //            }
+    //        }
+    //    }
+    //}
 }

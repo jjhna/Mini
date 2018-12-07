@@ -6,9 +6,9 @@ public class FoodScript : MonoBehaviour
 {
     private GameObject Foodie, Spawnie;
     public bool[] foodcheckarray = new bool[100];
-    Mini1 min1;
-    GameObject[] AIArray = new GameObject[100];
-    AImovment1[] AImoveArray = new AImovment1[100];
+    private Mini1 min1;
+    private GameObject[] AIArray = new GameObject[100];
+    private AImovment1[] AImoveArray = new AImovment1[100];
 
     //A constructor to intialize and get components from the clone AI's
     void FoodConstructor()

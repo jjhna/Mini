@@ -15,9 +15,9 @@ public class AImovment1 : MonoBehaviour
     private int randint;
     public int randhit;
     public int[] randarray = new int[400];
-    GameObject[] FoodItems = new GameObject[968];
-    FoodScript[] foodies = new FoodScript[968];
-    Mini1 min1;
+    private GameObject[] FoodItems = new GameObject[968];
+    private FoodScript[] foodies = new FoodScript[968];
+    private Mini1 min1;
 
     //A constructor to intialize and get components from the clone AI's
     void BotConstructor()
@@ -80,6 +80,7 @@ public class AImovment1 : MonoBehaviour
                 }
                 else
                 {
+                    //fitness -= 10;
                     fitness--;
                 }
             }

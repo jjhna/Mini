@@ -9,35 +9,27 @@ public class Mini1 : MonoBehaviour
 {
     public static System.Random rand = new System.Random();
     public int generation = 1;
-    public int botnum = 0;
-    public int parentnum = 0;
-    public int offspringnum = 0;
-
-    public int ansnum = 0;
+    public int botnum, parentnum, offspringnum, ansnum, winner, winrandhit = 0;
 
     public GameObject Bot, Off, Parent;
-    public GameObject[] BotArray;
-    public GameObject[] ParentArray;
-    public GameObject[] OffArray;
+    public GameObject[] BotArray, ParentArray, OffArray;
 
-    AImovment1[] AImove;
-    ParentScripo[] parents;
-    OffspringScript[] offspring;
+    private AImovment1[] AImove;
+    private ParentScripo[] parents;
+    private OffspringScript[] offspring;
 
     public bool doney, allDead = false;
     [SerializeField]
-    private int[] FitArray;
-    private int[] OffFitArray;
-    private int[] ParentFitArray;
-    private int[] RandHitArray;
-    private int[] ParentHitArray;
-    private int[] OffHitArray;
+    private int[] FitArray, OffFitArray, ParentFitArray, RandHitArray, ParentHitArray, OffHitArray;
     private bool[] endArray;
-
-    public int winner = 0;
-    public int winrandhit = 0;
+    private float timer;
     [SerializeField]
-    GameObject Winnerdinner;
+    private float finalTime = 0.0f;
+    [SerializeField]
+    List<int> FitList, CountList, ParList = new List<int>();
+    private int countthis = 0;
+
+    private List<int>[] holdmyhand = new List<int>[100];
 
     void Start()
     {
@@ -50,16 +42,19 @@ public class Mini1 : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        timer += Time.deltaTime;
         //If all AI's are dead or generation hits x amount then program ends
         if (Exitcheck() == true || generation == 1000)
         {
-            Winnerdinner = BotArray[winner];
+            finalTime = timer;
+            WriteText();
             PressPause();
         }
         //if all AI's are dead then new generation
         else if (allDead == true)
         {
             FitnessFill();
+            AverageFitness();
             EraseCopies();
             SpawnCopy();
             generation++;
@@ -75,6 +70,57 @@ public class Mini1 : MonoBehaviour
             FitnessFill();
             CheckCollide();
         }
+    }
+
+    //Calculates the average of all the fitness every generation
+    void AverageFitness()
+    {
+        countthis++;
+        int fitsum = FitArray.Sum();
+        int parsum = ParentFitArray.Sum();
+        for (int i = 0; i < holdmyhand.Length; i++)
+        {
+            holdmyhand[i].Add(AImove[i].fitness);
+        }
+
+        int fitavg = fitsum / botnum;
+        int paravg = parsum / parentnum;
+
+        FitList.Add(fitavg);
+        CountList.Add(countthis);
+        ParList.Add(paravg);
+    }
+
+    //Data is written to text files in A:\Document\ICS 674\Data
+    void WriteText()
+    {
+        List<int> Finalist = new List<int>();
+        Finalist = holdmyhand[winner].ToList();
+        string line = string.Join(",", FitList.Select(n => n.ToString()).ToArray());
+        string line2 = string.Join(",", CountList.Select(n => n.ToString()).ToArray());
+        string line3 = string.Join(",", ParList.Select(n => n.ToString()).ToArray());
+        string line4 = string.Join(",", Finalist.Select(n => n.ToString()).ToArray());
+        System.IO.StreamWriter file1 = new System.IO.StreamWriter("A:/Document/ICS 674/Data/datafit1.txt");
+        file1.WriteLine("Mini1");
+        file1.WriteLine("Generation: " + generation);
+        file1.WriteLine("Final time: " + (finalTime/60));
+        file1.WriteLine("Winner final array: " + winrandhit + " final fitness: " + AImove[winner].fitness);
+        file1.WriteLine("Average total fitness: " + FitList.Count);
+        file1.WriteLine("Average fitness Array: " + line);
+        file1.WriteLine("Count total: " + CountList.Count);
+        file1.WriteLine("Count Array: " + line2);
+        file1.WriteLine("Average total parents: " + ParList.Count);
+        file1.WriteLine("Parent fitness Array: " + line3);
+        file1.WriteLine("Finalist final fitness: " + AImove[winner].fitness);
+        file1.WriteLine("Finallist: " + line4);
+        for (int i = 0; i < holdmyhand.Length; i++)
+        {
+            List<int> tempalist = new List<int>();
+            tempalist = holdmyhand[i].ToList();
+            string liner = string.Join(",", tempalist.Select(n => n.ToString()).ToArray());
+            file1.WriteLine("Array fitness lists " + i + ": " + liner);
+        }
+        file1.Close();
     }
 
     //Tournament Selection, pits 1 vs 1 random selected parents, send to parents, parents clone to offsprings
@@ -159,11 +205,11 @@ public class Mini1 : MonoBehaviour
             //Changes rest of the array from before it hits a wall
             for (int i = 0; i < offspringnum; i++)
             {
-                int ran8 = RandomInt(1, 5);
+                int ran8 = RandomInt(0, 5);
                 int a = OffHitArray[i];
                 if (a > 5)
                 {
-                    a = a - ran8;
+                    a -= ran8;
                 }
                 int h = 0;
                 while (h != 1)
@@ -184,35 +230,30 @@ public class Mini1 : MonoBehaviour
         }
         else
         {
-            //20% chance for offspring to use swap mutation with 2-10 whole arrays from a random array location
+            //20% chance for offspring to use flip mutation but only with 1-10 indexes in the array
             for (int i = 0; i < offspringnum; i++)
             {
-                int j = 0;
-                int d = 0;
-                int ran4 = RandomInt(0, (ansnum - 25));
-                int ran5 = RandomInt(5, 25);
-                int[] temp = new int[ran5];
-                //Get all 5-10 elements and store in a temp array
-                for (int b = ran4; b < (ran4 + ran5); b++)
+                int a = OffHitArray[i];
+                int ran5 = RandomInt(1, 10);
+                int b = 0;
+                if (a > ran5)
                 {
-                    temp[j] = offspring[i].offspringarray[b];
-                    j++;
+                    b = a + ran5;
                 }
-                //Use fisher-yates shuffle, shuffles the sequence
-                int k = temp.Length;
-                while (k > 1)
+                int h = 0;
+                while (h != 1)
                 {
-                    k--;
-                    int f = rand.Next(k + 1);
-                    int temptemp = temp[f];
-                    temp[f] = temp[k];
-                    temp[k] = temptemp;
-                }
-                //Now put back that shit into the array
-                for (int b = ran4; b < (ran4 + ran5); b++)
-                {
-                    offspring[i].offspringarray[b] = temp[d];
-                    d++;
+                    int ran1 = RandomInt(1, 5);
+                    int offtest = offspring[i].offspringarray[a];
+                    int checker = MoveCheck(offtest);
+                    if (ran1 != offtest && ran1 != checker)
+                    {
+                        for (; a < b; a++)
+                        {
+                            offspring[i].offspringarray[a] = ran1;
+                        }
+                        h++;
+                    }
                 }
             }
         }
@@ -224,11 +265,11 @@ public class Mini1 : MonoBehaviour
             //Changes rest of the array from before it hits a wall
             for (int i = 0; i < parentnum; i++)
             {
-                int ran8 = RandomInt(1, 25);
                 int a = ParentHitArray[i];
-                if (a > 25)
+                int ran8 = RandomInt(0, 5);
+                if (a > 5)
                 {
-                    a = a - ran8;
+                    a -= ran8;
                 }
                 int h = 0;
                 while (h != 1)
@@ -249,35 +290,30 @@ public class Mini1 : MonoBehaviour
         }
         else
         {
-            //20% chance for parent to use swap mutation with 2-10 whole arrays from a random array location
+            //20% chance for offspring to use flip mutation but only with 1-10 indexes in the array
             for (int i = 0; i < parentnum; i++)
             {
-                int j = 0;
-                int d = 0;
-                int ran4 = RandomInt(0, (ansnum - 25));
-                int ran5 = RandomInt(5, 25);
-                int[] temp = new int[ran5];
-                //Get all 5-10 elements and store in a temp array
-                for (int b = ran4; b < (ran4 + ran5); b++)
+                int a = ParentHitArray[i];
+                int ran5 = RandomInt(1, 10);
+                int b = 0;
+                if (a > ran5)
                 {
-                    temp[j] = parents[i].parentarray[b];
-                    j++;
+                    b = a + ran5;
                 }
-                //Use fisher-yates shuffle, shuffles the sequence
-                int k = temp.Length;
-                while (k > 1)
+                int h = 0;
+                while (h != 1)
                 {
-                    k--;
-                    int f = rand.Next(k + 1);
-                    int temptemp = temp[f];
-                    temp[f] = temp[k];
-                    temp[k] = temptemp;
-                }
-                //Now put back that shit into the array
-                for (int b = ran4; b < (ran4 + ran5); b++)
-                {
-                    parents[i].parentarray[b] = temp[d];
-                    d++;
+                    int ran1 = RandomInt(1, 5);
+                    int offtest = parents[i].parentarray[a];
+                    int checker = MoveCheck(offtest);
+                    if (ran1 != offtest && ran1 != checker)
+                    {
+                        for (; a < b; a++)
+                        {
+                            parents[i].parentarray[a] = ran1;
+                        }
+                        h++;
+                    }
                 }
             }
         }
@@ -296,7 +332,6 @@ public class Mini1 : MonoBehaviour
             i++;
             j++;
         }
-
         doney = true; //Tells the Food gameobjects that the AI's has been reset
     }
 
@@ -307,6 +342,8 @@ public class Mini1 : MonoBehaviour
         {
             //GameObject go gets the output insantiate which is the type of gameobject and then assign it to AImove
             BotArray[i] = Instantiate(Bot, new Vector2(-6 + (i * 0.001f), 4.3f), transform.rotation);
+            //BotArray[i] = Instantiate(Bot, new Vector2(6 + (i * 0.001f), -3.3f), transform.rotation); //Used only for testing purposes
+            //BotArray[i] = Instantiate(Bot, new Vector2(3 + (i * 0.001f), -3.3f), transform.rotation); //Used only for testing purposes
             AImove[i] = BotArray[i].GetComponent<AImovment1>();
             allDead = false;
         }
@@ -359,6 +396,12 @@ public class Mini1 : MonoBehaviour
         OffHitArray = new int[offspringnum];
 
         endArray = new bool[botnum];
+
+        for (int i = 0; i < holdmyhand.Length; i++)
+        {
+            List<int> holdy = new List<int>();
+            holdmyhand[i] = holdy;
+        }
     }
 
     //Function to randomly choose between min and max, return int+
@@ -465,6 +508,7 @@ public class Mini1 : MonoBehaviour
         {
             BotArray[i].SetActive(false);
         }
+        Debug.Break();
     }
 
 }
