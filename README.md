@@ -9,7 +9,7 @@ To view the files please check out the Assets folder which should contain all th
 
 How to use this program:
 
-1. Download or clone the repo into a folder on your computer.
+1. Download or clone the repo into a folder on your computer: https://github.com/jjhna/Mini
 
 2. Download and install Unity: https://unity3d.com/get-unity/download.
 
