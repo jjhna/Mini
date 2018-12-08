@@ -23,3 +23,4 @@ or
 
 Have fun
 
+Also note that a video sample of the project can be found under Sample.zip
