@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/* Name: Na, Jonathan For: ICS 674 Professor: Lee Altenberg Project: Final Maze Project Class: OffspringScript.cs
+    The purpose of this class is to be a place holder for the Offsprings.
+    This current class is built for both the small and large food size tiles. */
 public class OffspringScript : MonoBehaviour {
 
     private GameObject Boto;
@@ -15,6 +18,7 @@ public class OffspringScript : MonoBehaviour {
         BotConstructor();
     }
 
+    //A constructor to intialize and get components from the Offsprings
     void BotConstructor()
     {
         Boto = GameObject.Find("OffspringAI(Clone)");

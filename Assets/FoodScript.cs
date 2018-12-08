@@ -4,13 +4,17 @@ using UnityEngine;
 
 public class FoodScript : MonoBehaviour
 {
+    /* Name: Na, Jonathan For: ICS 674 Professor: Lee Altenberg Project: Final Maze Project Class: FoodScript.cs
+    The purpose of this class is to gather data from the AI's of each cycle and determine if they have triggered the 
+    food gameobject at any point during the AI's lifespan.
+    This current class is built for both the small and large food size tiles. */
     private GameObject Foodie, Spawnie;
     public bool[] foodcheckarray = new bool[100];
     private Mini1 min1;
     private GameObject[] AIArray = new GameObject[100];
     private AImovment1[] AImoveArray = new AImovment1[100];
 
-    //A constructor to intialize and get components from the clone AI's
+    //A constructor to intialize and get components from the Food gameobject
     void FoodConstructor()
     {
         //Finds the spawn gameobject

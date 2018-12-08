@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-//Script to move the multiple AI's
+/* Name: Na, Jonathan For: ICS 674 Professor: Lee Altenberg Project: Final Maze Project Class: AImovment1.cs
+    The purpose of this class is to control the AI, from its movement array to its collision and fitness.
+    This current class is built for the smaller food size tiles. */
 public class AImovment1 : MonoBehaviour
 {
     private GameObject Boto, Spawno;
@@ -55,18 +57,22 @@ public class AImovment1 : MonoBehaviour
     //To the AI that has triggered it
     void OnTriggerEnter2D(Collider2D col)
     {
+        //If AI hits a wall = dead
         if (col.gameObject.tag == "Wall")
         {
             randhit = randint;
             Boto.SetActive(false);
             collided = true;
         }
+        //If AI reaches the exit = Win = Finish
         else if (col.gameObject.tag == "Final")
         {
             min1.winner = whatnumami;
             min1.winrandhit = randint;
             exit = true;
         }
+        //If AI triggers a food tile then it gains a fitness point, 
+        //If its a triggered food tile from before then it loses a fitness point. 
         else if (col.gameObject.tag == "FoodTag")
         {
             GameObject miep = col.gameObject;

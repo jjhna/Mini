@@ -4,7 +4,11 @@ using UnityEngine;
 using UnityEditor;
 using System.Linq;
 
-//Uses the car movement, rotation + front raycast
+
+/* Name: Na, Jonathan For: ICS 674 Professor: Lee Altenberg Project: Final Maze Project Class: Mini1.cs
+    The purpose of this class is to gather all the necessary data to perform the Evolutionary
+    Compuation cycle: Selection, Recombine, Mutation, Repeat. This current class is built for
+    the larger food size tiles. */
 public class Mini4 : MonoBehaviour
 {
     public static System.Random rand = new System.Random();
@@ -43,7 +47,7 @@ public class Mini4 : MonoBehaviour
     void Update()
     {
         timer += Time.deltaTime;
-        //If all AI's are dead or generation hits x amount then program ends
+        //If a AI reaches the exit or generation counter hits 1000 amount then program ends
         if (Exitcheck() == true || generation == 1000)
         {
             finalTime = timer;
@@ -91,7 +95,7 @@ public class Mini4 : MonoBehaviour
         ParList.Add(paravg);
     }
 
-    //Data is written to text files in A:\Document\ICS 674\Data
+    //Data is written to text files in A:\Document\ICS 674\Data <==== CHANGE LOCATION IN THIS FUNCTION TO WHERE YOU WANT THE DATA TO BE SENT
     void WriteText()
     {
         List<int> Finalist = new List<int>();
@@ -175,8 +179,7 @@ public class Mini4 : MonoBehaviour
         }
     }
 
-    //Uses single-point crossover based off a random crossover point
-    //Pits both AI's by sets of twos, actually better than non-random crossover points
+    //Uses single-point crossover based off a random crossover point, pits both AI's by sets of twos
     void Recombine()
     {
         int k = 0;
@@ -236,7 +239,7 @@ public class Mini4 : MonoBehaviour
                 int a = OffHitArray[i];
                 int ran5 = RandomInt(1, 10);
                 int b = 0;
-                if (a > ran5)
+                if (a > 0 && a < 390)
                 {
                     b = a + ran5;
                 }
@@ -296,7 +299,7 @@ public class Mini4 : MonoBehaviour
                 int a = ParentHitArray[i];
                 int ran5 = RandomInt(1, 10);
                 int b = 0;
-                if (a > ran5)
+                if (a > 0 && a < 390)
                 {
                     b = a + ran5;
                 }

@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/* Name: Na, Jonathan For: ICS 674 Professor: Lee Altenberg Project: Final Maze Project Class: ParentScripo.cs
+    The purpose of this class is to be a place holder for the Parents.
+    This current class is built for both the small and large food size tiles. */
 public class ParentScripo : MonoBehaviour {
 
     private GameObject Boto;
@@ -14,6 +17,7 @@ public class ParentScripo : MonoBehaviour {
         BotConstructor();
     }
 
+    //A constructor to intialize and get components from the Parents
     void BotConstructor()
     {
         Boto = GameObject.Find("ParentBot(Clone)");
